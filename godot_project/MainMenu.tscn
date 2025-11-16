@@ -9,13 +9,35 @@ script = ExtResource( 1 )
 rect_position = Vector2(240, 120)
 rect_min_size = Vector2(320, 200)
 
-[node name="StartButton" type="Button" parent="VBox"]
-text = "Start"
+[node name="ContinueButton" type="Button" parent="VBox"]
+text = "Fortsetzen"
+rect_min_size = Vector2(300, 50)
+
+[node name="NewGameButton" type="Button" parent="VBox"]
+text = "Neues Spiel"
 rect_min_size = Vector2(300, 50)
 
 [node name="OptionsButton" type="Button" parent="VBox"]
 text = "Options"
 rect_min_size = Vector2(300, 50)
+
+[node name="OptionsPanel" type="Panel" parent="."]
+rect_position = Vector2(240, 340)
+rect_min_size = Vector2(320, 120)
+visible = false
+
+[node name="OptVBox" type="VBoxContainer" parent="OptionsPanel"]
+rect_min_size = Vector2(300, 100)
+
+[node name="LangLabel" type="Label" parent="OptVBox"]
+text = "Language"
+
+[node name="LangOption" type="OptionButton" parent="OptVBox"]
+items = ["Deutsch","English"]
+
+[node name="OptClose" type="Button" parent="OptVBox"]
+text = "Close"
+rect_min_size = Vector2(80, 30)
 
 [node name="QuitButton" type="Button" parent="VBox"]
 text = "Ende"
