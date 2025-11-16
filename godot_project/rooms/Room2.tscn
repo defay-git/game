@@ -1,0 +1,73 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource path="res://godot_project/Door.gd" type="Script" id=1]
+
+[node name="Room2" type="Node2D"]
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="WallTop" type="StaticBody2D" parent="Walls"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallTop"]
+shape = SubResource( 1 )
+position = Vector2( 160, 8 )
+
+[node name="WallRight" type="StaticBody2D" parent="Walls"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallRight"]
+shape = SubResource( 2 )
+position = Vector2( 312, 90 )
+
+[node name="WallBottom" type="StaticBody2D" parent="Walls"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallBottom"]
+shape = SubResource( 3 )
+position = Vector2( 160, 172 )
+
+[node name="WallLeftTop" type="StaticBody2D" parent="Walls"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallLeftTop"]
+shape = SubResource( 4 )
+position = Vector2( 8, 50 )
+
+[node name="WallLeftBottom" type="StaticBody2D" parent="Walls"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WallLeftBottom"]
+shape = SubResource( 5 )
+position = Vector2( 8, 130 )
+
+[node name="Doors" type="Node2D" parent="."]
+
+[node name="DoorLeft" type="Area2D" parent="Doors"]
+script = ExtResource( 1 )
+position = Vector2( 0, 90 )
+target_scene_path = "res://godot_project/rooms/Room1.tscn"
+spawn_position = Vector2( 304, 90 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DoorLeft"]
+shape = SubResource( 6 )
+
+[node name="DoorDown" type="Area2D" parent="Doors"]
+script = ExtResource( 1 )
+position = Vector2( 160, 180 )
+target_scene_path = "res://godot_project/rooms/Room4.tscn"
+spawn_position = Vector2( 160, 16 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DoorDown"]
+shape = SubResource( 7 )
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 160, 8 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 8, 90 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 160, 8 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 8, 50 )
+
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 8, 40 )
+
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 8, 32 )
+
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 32, 8 )

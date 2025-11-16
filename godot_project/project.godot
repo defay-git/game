@@ -1,0 +1,6 @@
+[application]
+config/name="Godot Mini Game"
+config/description="Minimal 2D Godot project with menu and a first level of 4 rooms."
+
+[rendering]
+quality/driver/driver_name="GLES3"

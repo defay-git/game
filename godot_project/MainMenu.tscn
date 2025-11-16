@@ -1,0 +1,22 @@
+[gd_scene load_steps=1 format=3]
+
+[ext_resource path="res://godot_project/Menu.gd" type="Script" id=1]
+
+[node name="MainMenu" type="Control"]
+script = ExtResource( 1 )
+
+[node name="VBox" type="VBoxContainer" parent="."]
+rect_position = Vector2(240, 120)
+rect_min_size = Vector2(320, 200)
+
+[node name="StartButton" type="Button" parent="VBox"]
+text = "Start"
+rect_min_size = Vector2(300, 50)
+
+[node name="OptionsButton" type="Button" parent="VBox"]
+text = "Options"
+rect_min_size = Vector2(300, 50)
+
+[node name="QuitButton" type="Button" parent="VBox"]
+text = "Ende"
+rect_min_size = Vector2(300, 50)
