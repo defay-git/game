@@ -1,119 +1,87 @@
 extends Node2D
 
-var current_room: Node = null
-var current_room_path: String = ""
-onready var room_container := $RoomContainer
 onready var player := $Player
-onready var transition := $Transition
 onready var hud_label := $HUD/RoomLabel
-onready var sfx := $Sfx
-var save_manager := null
 var _localization: Node
+var _food_list: Array = []
+var _spawn_timer: float = 0.0
 
-@export var auto_start_check_save: bool = true
-var _started: bool = false
+@export var food_spawn_interval: float = 1.0
+@export var level_width: float = 1280.0
+@export var level_height: float = 720.0
 
 func _ready() -> void:
-    # SaveManager is a script-only helper; instantiate and keep in scene
-    save_manager = preload("res://godot_project/SaveManager.gd").new()
-    add_child(save_manager)
-    # Initialize localization once
     _localization = preload("res://godot_project/Localization.gd").new()
-    # Auto-start the level; check for explicit start-mode written by Menu.gd
-    var use_save = auto_start_check_save
-    var cfg = ConfigFile.new()
-    var err = cfg.load("user://start_mode.cfg")
-    if err == OK:
-        use_save = bool(cfg.get_value("start", "use_save", use_save))
-        # remove the file so it doesn't affect future starts
-        var da = DirAccess.open("user://")
-        if da:
-            if da.file_exists("start_mode.cfg"):
-                da.remove("start_mode.cfg")
-    start(use_save)
+    player.position = Vector2(level_width / 2, level_height / 2)
+    hud_label.text = "Size: " + str(int(player.get_size()))
+    _spawn_food()
 
-func start(use_save: bool = true) -> void:
-    if _started:
-        return
-    _started = true
-    if use_save and save_manager:
-        var data = save_manager.load_game()
-        if data.has("room") and data["room"] != "":
-            load_room(data["room"], data["pos"])
-            return
-    # fallback: load default first room
-    load_room("res://godot_project/rooms/Room1.tscn", Vector2(160, 90))
-
-func _input(event):
-    if event is InputEventKey and event.pressed:
-        # F5 save, F9 load
-        if event.scancode == Key.F5:
-            _save_game()
-        elif event.scancode == Key.F9:
-            _load_game()
-
-func _save_game() -> void:
-    if save_manager:
-        save_manager.save_game(current_room_path, player.position)
-        print("Game saved")
-
-func _load_game() -> void:
-    if not save_manager:
-        return
-    var data = save_manager.load_game()
-    if data.has("room") and data["room"] != "":
-        load_room(data["room"], data["pos"])
-        print("Game loaded")
-
-func load_room(path: String, player_spawn: Vector2) -> void:
-    # fade out, load, then fade in
-    await transition.fade_out()
-
-    # remove existing room
-    for c in room_container.get_children():
-        c.queue_free()
-
-    var res = ResourceLoader.load(path)
-    if not res:
-        push_error("Failed to load room: %s" % path)
-        await transition.fade_in()
-        return
-
-    var room = res.instantiate()
-    room_container.add_child(room)
-    current_room = room
-    current_room_path = path
-
-    # position player
-    player.position = player_spawn
-
-    # set camera limits (room assumed to be 320x180 unless room provides rect)
-    var room_rect = Rect2(Vector2.ZERO, Vector2(320, 180))
-    # if room provides `room_size` export, use it
-    if room.has_method("get_room_rect"):
-        room_rect = room.get_room_rect()
-    player.set_camera_limits(room_rect)
-
-    # update HUD (localized prefix)
+func _physics_process(delta: float) -> void:
+    # Update HUD
     if hud_label:
-        hud_label.text = _localization.translate("room_prefix") + path.get_file()
+        hud_label.text = "Size: " + str(int(player.get_size()))
+    
+    # Food spawning
+    _spawn_timer += delta
+    if _spawn_timer >= food_spawn_interval:
+        _spawn_food()
+        _spawn_timer = 0.0
+    
+    # Check collisions with food
+    _check_food_collisions()
 
-    # connect doors inside the room
-    _connect_doors_recursive(room)
+func _spawn_food() -> void:
+    # Create a small food square at random position
+    var food = Node2D.new()
+    food.position = Vector2(
+        randf_range(50, level_width - 50),
+        randf_range(50, level_height - 50)
+    )
+    
+    # Store food data: [pos, size, eaten]
+    var food_data = {
+        "pos": food.position,
+        "size": 8.0,
+        "eaten": false,
+        "id": len(_food_list)
+    }
+    _food_list.append(food_data)
+    add_child(food)
+    food.queue_free()  # Don't keep node, just track data
+    
+    # Limit food to max 50
+    if len(_food_list) > 50:
+        _food_list.pop_front()
 
-    # play SFX
-    if sfx and sfx.has_method("play_beep"):
-        sfx.play_beep()
+func _check_food_collisions() -> void:
+    var player_pos = player.position
+    var player_size = player.get_size()
+    var player_rect = Rect2(player_pos - Vector2(player_size/2, player_size/2), Vector2(player_size, player_size))
+    
+    var to_remove = []
+    for i in range(len(_food_list)):
+        var food = _food_list[i]
+        if food["eaten"]:
+            continue
+        
+        var food_rect = Rect2(food["pos"] - Vector2(food["size"]/2, food["size"]/2), Vector2(food["size"], food["size"]))
+        if player_rect.intersects(food_rect):
+            food["eaten"] = true
+            player.grow(1.0)
+            to_remove.append(i)
+    
+    # Remove eaten food
+    for i in to_remove.reverse():
+        _food_list.remove_at(i)
 
-    await transition.fade_in()
+func _draw() -> void:
+    # Draw background
+    draw_rect(Rect2(0, 0, level_width, level_height), Color(0.15, 0.15, 0.2))
+    
+    # Draw food
+    for food in _food_list:
+        if not food["eaten"]:
+            var size = food["size"]
+            var rect = Rect2(food["pos"] - Vector2(size/2, size/2), Vector2(size, size))
+            draw_rect(rect, Color(1.0, 0.8, 0.2))
 
-func _connect_doors_recursive(node: Node) -> void:
-    for child in node.get_children():
-        if child is Area2D and child.get_script() and String(child.get_script().get_path()).ends_with("Door.gd"):
-            # ensure connected only once
-            if not child.is_connected("request_room_change", Callable(self, "_on_request_room_change")):
-                child.connect("request_room_change", Callable(self, "_on_request_room_change"))
-        _connect_doors_recursive(child)
-
-func _on_request_room_change(target_path: String, spawn_pos: Vector2) -> void:
-    load_room(target_path, spawn_pos)
