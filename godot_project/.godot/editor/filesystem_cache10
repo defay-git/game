@@ -1,0 +1,17 @@
+63f7b34db8d8cdea90c76aacccf841ec
+::res://::1763315816
+Door.gd::GDScript::6500226185912373369::1763315773::0::1::::<>Area2D<><>0<>0<><>::
+Level1.gd::GDScript::5224543109857954802::1763315773::0::1::::<>Node2D<><>0<>0<><>::
+Level1.tscn::PackedScene::-1::1763315773::0::1::::<><><>0<>0<><>::res://godot_project/Level1.gd<>res://godot_project/Player.tscn<>res://godot_project/Transition.gd<>res://godot_project/Sfx.gd
+MainMenu.tscn::PackedScene::-1::1763315773::0::1::::<><><>0<>0<><>::res://godot_project/Menu.gd
+Menu.gd::GDScript::3937276848702362751::1763315773::0::1::::<>Control<><>0<>0<><>::
+Player.gd::GDScript::7551628981455465883::1763315773::0::1::::<>CharacterBody2D<><>0<>0<><>::
+Player.tscn::PackedScene::-1::1763315773::0::1::::<><><>0<>0<><>::res://godot_project/Player.gd
+SaveManager.gd::GDScript::5570435393265311324::1763315773::0::1::::<>Node<><>0<>0<><>::
+Sfx.gd::GDScript::1500971044167578497::1763315773::0::1::::<>Node<><>0<>0<><>::
+Transition.gd::GDScript::8274371444726779759::1763315773::0::1::::<>CanvasLayer<><>0<>0<><>::
+::res://rooms/::1763315773
+Room1.tscn::PackedScene::-1::1763315773::0::1::::<><><>0<>0<><>::res://godot_project/Door.gd
+Room2.tscn::PackedScene::-1::1763315773::0::1::::<><><>0<>0<><>::res://godot_project/Door.gd
+Room3.tscn::PackedScene::-1::1763315773::0::1::::<><><>0<>0<><>::res://godot_project/Door.gd
+Room4.tscn::PackedScene::-1::1763315773::0::1::::<><><>0<>0<><>::res://godot_project/Door.gd
