@@ -26,9 +26,20 @@ func _ready() -> void:
         $OptionsPanel/OptVBox/ResolutionOption.connect("item_selected", Callable(self, "_on_resolution_selected"))
     
     _apply_localization()
+    # hide any unexpected UI controls (cleanup overlapping leftover UI)
+    for child in get_children():
+        if child is Control:
+            var n = child.name
+            if n != "ColorRect" and n != "VBox" and n != "OptionsPanel":
+                child.visible = false
 
 func _on_start_pressed() -> void:
-    get_tree().change_scene_to_file("res://godot_project/Level1.tscn")
+    var path := "res://godot_project/Level1.tscn"
+    if ResourceLoader.exists(path):
+        print("Start pressed - loading scene: %s" % path)
+        get_tree().change_scene_to_file(path)
+    else:
+        push_error("Level scene not found: %s" % path)
 
 func _on_options_pressed() -> void:
     if has_node("OptionsPanel"):
