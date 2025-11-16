@@ -21,7 +21,10 @@ var _strings := {
     }
 }
 
-onready var settings := preload("res://godot_project/Settings.gd").new()
+var settings: Node
+
+func _init() -> void:
+    settings = preload("res://godot_project/Settings.gd").new()
 
 func translate(key: String) -> String:
     var lang = settings.get_language()

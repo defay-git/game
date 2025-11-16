@@ -8,6 +8,7 @@ onready var transition := $Transition
 onready var hud_label := $HUD/RoomLabel
 onready var sfx := $Sfx
 var save_manager := null
+var _localization: Node
 
 @export var auto_start_check_save: bool = true
 var _started: bool = false
@@ -16,6 +17,8 @@ func _ready() -> void:
     # SaveManager is a script-only helper; instantiate and keep in scene
     save_manager = preload("res://godot_project/SaveManager.gd").new()
     add_child(save_manager)
+    # Initialize localization once
+    _localization = preload("res://godot_project/Localization.gd").new()
     # Auto-start the level; check for explicit start-mode written by Menu.gd
     var use_save = auto_start_check_save
     var cfg = ConfigFile.new()
@@ -93,8 +96,7 @@ func load_room(path: String, player_spawn: Vector2) -> void:
 
     # update HUD (localized prefix)
     if hud_label:
-        var loc = preload("res://godot_project/Localization.gd").new()
-        hud_label.text = loc.translate("room_prefix") + path.get_file()
+        hud_label.text = _localization.translate("room_prefix") + path.get_file()
 
     # connect doors inside the room
     _connect_doors_recursive(room)

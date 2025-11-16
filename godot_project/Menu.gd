@@ -1,6 +1,13 @@
 extends Control
 
+var _localization: Node
+var _settings: Node
+
 func _ready() -> void:
+    # Initialize localization and settings once
+    _localization = preload("res://godot_project/Localization.gd").new()
+    _settings = preload("res://godot_project/Settings.gd").new()
+    
     # Connect buttons if present
     if has_node("ContinueButton"):
         $ContinueButton.pressed.connect(_on_continue_pressed)
@@ -37,8 +44,7 @@ func _on_options_pressed() -> void:
     if has_node("OptionsPanel"):
         $OptionsPanel.visible = true
         # set current selection from settings
-        var settings = preload("res://godot_project/Settings.gd").new()
-        var lang = settings.get_language()
+        var lang = _settings.get_language()
         var idx = 0
         if lang == "de":
             idx = 0
@@ -52,25 +58,23 @@ func _on_close_options() -> void:
 
 func _on_lang_selected(index: int) -> void:
     var lang = (index == 0) ? "de" : "en"
-    var settings = preload("res://godot_project/Settings.gd").new()
-    settings.set_language(lang)
+    _settings.set_language(lang)
     _apply_localization()
 
 func _apply_localization() -> void:
-    var loc = preload("res://godot_project/Localization.gd").new()
     if has_node("ContinueButton"):
-        $ContinueButton.text = loc.translate("continue")
+        $ContinueButton.text = _localization.translate("continue")
     if has_node("NewGameButton"):
-        $NewGameButton.text = loc.translate("new_game")
+        $NewGameButton.text = _localization.translate("new_game")
     if has_node("OptionsButton"):
-        $OptionsButton.text = loc.translate("options")
+        $OptionsButton.text = _localization.translate("options")
     if has_node("QuitButton"):
-        $QuitButton.text = loc.translate("quit")
+        $QuitButton.text = _localization.translate("quit")
     # Options panel labels
     if has_node("OptionsPanel/OptVBox/LangLabel"):
-        $OptionsPanel/OptVBox/LangLabel.text = loc.translate("language")
+        $OptionsPanel/OptVBox/LangLabel.text = _localization.translate("language")
     if has_node("OptionsPanel/OptVBox/OptClose"):
-        $OptionsPanel/OptVBox/OptClose.text = loc.translate("close")
+        $OptionsPanel/OptVBox/OptClose.text = _localization.translate("close")
 
 func _on_quit_pressed() -> void:
     get_tree().quit()
